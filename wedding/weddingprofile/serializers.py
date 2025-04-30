@@ -1,16 +1,9 @@
+# weddingprofile/serializers.py
 from rest_framework import serializers
 from .models import WeddingProfile
 from accounts.models import CustomUser
-from django.utils import timezone
-from datetime import date
 
 class WeddingProfileSerializer(serializers.ModelSerializer):
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
-    partner = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.all(),
-        required=False,
-        allow_null=True
-    )
     partner_details = serializers.SerializerMethodField()
     can_edit = serializers.SerializerMethodField()
 
@@ -20,15 +13,10 @@ class WeddingProfileSerializer(serializers.ModelSerializer):
             'id', 'owner', 'partner', 'bride', 'groom', 'religion', 'caste',
             'wedding_date', 'engagement_date', 'reception_date',
             'wedding_venue', 'engagement_venue', 'reception_venue',
-            'partner_can_edit'
+            'partner_can_edit', 'created_at', 'updated_at',
+            'partner_details', 'can_edit'  # Make sure these are included
         ]
-        extra_kwargs = {
-            'engagement_date': {'required': False, 'allow_null': True},
-            'reception_date': {'required': False, 'allow_null': True},
-            'engagement_venue': {'required': False, 'allow_null': True},
-            'reception_venue': {'required': False, 'allow_null': True},
-            'partner': {'required': False, 'allow_null': True},
-        }
+        read_only_fields = ('owner', 'created_at', 'updated_at')
 
     def get_partner_details(self, obj):
         if obj.partner:
@@ -45,5 +33,3 @@ class WeddingProfileSerializer(serializers.ModelSerializer):
             user = request.user
             return user == obj.owner or (user == obj.partner and obj.partner_can_edit)
         return False
-
-    

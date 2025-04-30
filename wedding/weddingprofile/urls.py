@@ -1,10 +1,5 @@
 from django.urls import path
-from .views import (
-    WeddingProfileListCreateAPIView,
-    WeddingProfileDetailAPIView,
-    TogglePartnerEditPermissionAPIView,
-    RemovePartnerAPIView
-)
+from .views import *
 
 urlpatterns = [
     path('profiles/', WeddingProfileListCreateAPIView.as_view(), name='wedding-profile-list-create'),
