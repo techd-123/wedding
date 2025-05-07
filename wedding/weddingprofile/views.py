@@ -8,7 +8,6 @@ from .models import WeddingProfile
 from .serializers import WeddingProfileSerializer
 from .permissions import IsOwnerOrPartnerReadOnly
 
-# In your Django view
 class WeddingProfileListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -16,7 +15,7 @@ class WeddingProfileListCreateAPIView(APIView):
         profiles = WeddingProfile.objects.filter(
             Q(owner=request.user) | Q(partner=request.user))
         serializer = WeddingProfileSerializer(profiles, many=True)
-        return Response(serializer.data)  # This should return an array
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = WeddingProfileSerializer(data=request.data, context={'request': request})

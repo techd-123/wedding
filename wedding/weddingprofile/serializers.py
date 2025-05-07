@@ -1,7 +1,7 @@
 # weddingprofile/serializers.py
 from rest_framework import serializers
 from .models import WeddingProfile
-from accounts.models import CustomUser
+from django.utils import timezone
 
 class WeddingProfileSerializer(serializers.ModelSerializer):
     partner_details = serializers.SerializerMethodField()
@@ -14,7 +14,7 @@ class WeddingProfileSerializer(serializers.ModelSerializer):
             'wedding_date', 'engagement_date', 'reception_date',
             'wedding_venue', 'engagement_venue', 'reception_venue',
             'partner_can_edit', 'created_at', 'updated_at',
-            'partner_details', 'can_edit'  # Make sure these are included
+            'partner_details', 'can_edit'
         ]
         read_only_fields = ('owner', 'created_at', 'updated_at')
 
@@ -33,3 +33,24 @@ class WeddingProfileSerializer(serializers.ModelSerializer):
             user = request.user
             return user == obj.owner or (user == obj.partner and obj.partner_can_edit)
         return False
+    
+    def validate_partner(self, value):
+        if value:
+            if value == self.context['request'].user:
+                raise serializers.ValidationError("You cannot set yourself as partner")
+        return value
+    
+    def validate(self, data):
+        # Validate engagement date is before wedding date if both exist
+        engagement_date = data.get('engagement_date')
+        wedding_date = data.get('wedding_date')
+        if engagement_date and wedding_date and engagement_date >= wedding_date:
+            raise serializers.ValidationError(
+                {"engagement_date": "Engagement date must be before wedding date"}
+            )
+        # Validate wedding date is in the future
+        if wedding_date and wedding_date < timezone.now().date():
+            raise serializers.ValidationError(
+                {"wedding_date" : "Wedding date must be in the future"}
+            )
+        return data
