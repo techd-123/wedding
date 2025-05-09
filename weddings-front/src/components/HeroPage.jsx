@@ -130,7 +130,6 @@ const HeroPage = () => {
               where you are!"
             </ParaText>
             <HeaderButton>
-              <Button>Still confused? Make a Call</Button>
               <LoginButton>Explore More</LoginButton>
             </HeaderButton>
           </Main>
