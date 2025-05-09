@@ -1,5 +1,9 @@
+import React, { useState } from "react";
 import styled from "styled-components";
 import Group from "../assets/images/Group.png";
+import RegisterPage from "../components/authPage/RegisterPage";
+import LoginPage from "../components/authPage/LoginPage";
+
 const Section = styled.div``;
 
 const Container = styled.div`
@@ -7,6 +11,7 @@ const Container = styled.div`
   margin: auto;
   padding: 10px;
 `;
+
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -19,20 +24,25 @@ const Logo = styled.div`
   text-align: center;
   align-items: center;
 `;
+
 const Nav = styled.ul`
   display: flex;
   gap: 30px;
 `;
+
 const NavList = styled.li`
   list-style: none;
   font-weight: 700;
   font-size: 16px;
 `;
+
 const HeaderButton = styled.div`
   display: flex;
   gap: 10px;
 `;
+
 const Img = styled.img``;
+
 const Text = styled.h2``;
 
 const Button = styled.button`
@@ -42,11 +52,35 @@ const Button = styled.button`
   color: #ffffff;
   border: none;
 `;
+
 const LoginButton = styled(Button)`
   background-color: #ff6b6b;
 `;
 
 const NavBar = () => {
+  const [showRegisterPage, setShowRegisterPage] = useState(false);
+  const [showLoginPage, setShowLoginPage] = useState(false);
+
+  // Function to show RegisterPage
+  const handleSignUpClick = () => {
+    setShowRegisterPage(true);
+  };
+
+  // Function to show LoginPage
+  const handleLoginClick = () => {
+    setShowLoginPage(true);
+  };
+
+  // Function to close RegisterPage
+  const handleCloseRegisterPage = () => {
+    setShowRegisterPage(false);
+  };
+
+  // Function to close LoginPage
+  const handleCloseLoginPage = () => {
+    setShowLoginPage(false);
+  };
+
   return (
     <Section>
       <Container>
@@ -65,11 +99,14 @@ const NavBar = () => {
           </Nav>
 
           <HeaderButton>
-            <Button>Sign up</Button>
-            <LoginButton>Login </LoginButton>
+            <Button onClick={handleSignUpClick}>Sign up</Button>
+            <LoginButton onClick={handleLoginClick}>Login</LoginButton>
           </HeaderButton>
         </Header>
       </Container>
+
+      {showRegisterPage && <RegisterPage onClose={handleCloseRegisterPage} />}
+      {showLoginPage && <LoginPage onClose={handleCloseLoginPage} />}
     </Section>
   );
 };
